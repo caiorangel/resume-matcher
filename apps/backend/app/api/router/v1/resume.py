@@ -1,5 +1,6 @@
 import logging
 import traceback
+from io import BytesIO
 
 from uuid import uuid4
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -19,6 +20,7 @@ from app.core import get_db_session
 from app.services import (
     ResumeService,
     ScoreImprovementService,
+    PDFService,
     ResumeNotFoundError,
     ResumeParsingError,
     JobNotFoundError,
@@ -122,7 +124,8 @@ async def score_and_improve(
             raise JobNotFoundError(
                 message="invalid value passed in `job_id` field, please try again with valid job_id."
             )
-        score_improvement_service = ScoreImprovementService(db=db)
+        language = str(request_payload.get("language", "en"))
+        score_improvement_service = ScoreImprovementService(db=db, language=language)
 
         if stream:
             return StreamingResponse(
@@ -231,4 +234,82 @@ async def get_resume(
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail="Error fetching resume data",
+        )
+
+
+@resume_router.post(
+    "/download-pdf",
+    summary="Generate and download PDF version of optimized resume",
+)
+async def download_resume_pdf(
+    request: Request,
+    payload: ResumeImprovementRequest,
+    db: AsyncSession = Depends(get_db_session),
+):
+    """
+    Generates and returns a PDF version of the optimized resume.
+    
+    Args:
+        payload: Contains resume_id and job_id to generate the optimized resume
+        
+    Returns:
+        StreamingResponse: PDF file for download
+        
+    Raises:
+        HTTPException: If resume generation or PDF creation fails
+    """
+    request_id = getattr(request.state, "request_id", str(uuid4()))
+    
+    try:
+        request_payload = payload.model_dump()
+        resume_id = str(request_payload.get("resume_id", ""))
+        job_id = str(request_payload.get("job_id", ""))
+        language = str(request_payload.get("language", "en"))
+        
+        if not resume_id:
+            raise ResumeNotFoundError(
+                message="invalid value passed in `resume_id` field, please try again with valid resume_id."
+            )
+        if not job_id:
+            raise JobNotFoundError(
+                message="invalid value passed in `job_id` field, please try again with valid job_id."
+            )
+            
+        # Generate the improved resume data
+        score_improvement_service = ScoreImprovementService(db=db, language=language)
+        improved_data = await score_improvement_service.run(
+            resume_id=resume_id,
+            job_id=job_id,
+        )
+        
+        # Generate PDF
+        pdf_service = PDFService()
+        pdf_content = pdf_service.generate_resume_pdf_from_improved_data({"data": improved_data})
+        
+        # Create a filename based on the resume data
+        resume_preview = improved_data.get('resume_preview', {})
+        personal_info = resume_preview.get('personalInfo', {}) if resume_preview else {}
+        name = personal_info.get('name', 'Resume') if personal_info else 'Resume'
+        filename = f"{name.replace(' ', '_')}_Resume.pdf" if name else "Optimized_Resume.pdf"
+        
+        return StreamingResponse(
+            BytesIO(pdf_content),
+            media_type="application/pdf",
+            headers={
+                "Content-Disposition": f"attachment; filename={filename}",
+                "X-Request-ID": request_id,
+            }
+        )
+        
+    except (ResumeNotFoundError, JobNotFoundError) as e:
+        logger.error(str(e))
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=str(e),
+        )
+    except Exception as e:
+        logger.error(f"Error generating PDF: {str(e)} - traceback: {traceback.format_exc()}")
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="Failed to generate PDF resume",
         )

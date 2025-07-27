@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ name }} - Resume</title>
+    <style>
+        @page {
+            size: A4;
+            margin: 1.5cm 2cm;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Georgia', 'Times New Roman', serif;
+            line-height: 1.6;
+            color: #333;
+            background: white;
+        }
+        
+        .container {
+            max-width: 100%;
+            margin: 0 auto;
+        }
+        
+        /* Header */
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 2px solid #2563eb;
+        }
+        
+        .header h1 {
+            font-size: 2.5em;
+            font-weight: 700;
+            color: #1e40af;
+            margin-bottom: 5px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        
+        .header .title {
+            font-size: 1.3em;
+            color: #64748b;
+            font-style: italic;
+            margin-bottom: 15px;
+        }
+        
+        .contact-info {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 20px;
+            font-size: 0.95em;
+            color: #475569;
+        }
+        
+        .contact-info span {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        
+        /* Section Styles */
+        .section {
+            margin-bottom: 25px;
+        }
+        
+        .section h2 {
+            font-size: 1.4em;
+            color: #1e40af;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 15px;
+            padding-bottom: 5px;
+            border-bottom: 1px solid #e2e8f0;
+            font-weight: 600;
+        }
+        
+        /* Summary */
+        .summary {
+            font-size: 1.05em;
+            line-height: 1.7;
+            color: #374151;
+            text-align: justify;
+        }
+        
+        /* Experience */
+        .experience-item {
+            margin-bottom: 20px;
+            page-break-inside: avoid;
+        }
+        
+        .experience-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 8px;
+            flex-wrap: wrap;
+        }
+        
+        .experience-title {
+            font-size: 1.15em;
+            font-weight: 600;
+            color: #1f2937;
+        }
+        
+        .experience-company {
+            font-weight: 500;
+            color: #2563eb;
+            margin-top: 2px;
+        }
+        
+        .experience-meta {
+            text-align: right;
+            color: #6b7280;
+            font-size: 0.9em;
+        }
+        
+        .experience-description {
+            margin-top: 8px;
+        }
+        
+        .experience-description ul {
+            list-style: none;
+            padding-left: 0;
+        }
+        
+        .experience-description li {
+            margin-bottom: 5px;
+            padding-left: 20px;
+            position: relative;
+            line-height: 1.5;
+        }
+        
+        .experience-description li:before {
+            content: "▪";
+            color: #2563eb;
+            font-size: 1.2em;
+            position: absolute;
+            left: 0;
+            top: -2px;
+        }
+        
+        /* Education */
+        .education-item {
+            margin-bottom: 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            flex-wrap: wrap;
+        }
+        
+        .education-info {
+            flex: 1;
+        }
+        
+        .education-degree {
+            font-weight: 600;
+            color: #1f2937;
+            font-size: 1.05em;
+        }
+        
+        .education-institution {
+            color: #2563eb;
+            font-weight: 500;
+            margin-top: 2px;
+        }
+        
+        .education-years {
+            color: #6b7280;
+            font-size: 0.9em;
+            margin-top: 5px;
+        }
+        
+        /* Skills */
+        .skills-grid {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+        
+        .skill-tag {
+            background: linear-gradient(135deg, #e0e7ff 0%, #c7d2fe 100%);
+            color: #3730a3;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 0.9em;
+            font-weight: 500;
+            border: 1px solid #a5b4fc;
+        }
+        
+        /* Two-column layout for larger sections */
+        @media print {
+            .skills-grid {
+                column-count: 2;
+                column-gap: 20px;
+            }
+            
+            .skill-tag {
+                display: inline-block;
+                margin-bottom: 8px;
+                break-inside: avoid;
+            }
+        }
+        
+        /* Print optimizations */
+        @media print {
+            body {
+                -webkit-print-color-adjust: exact;
+                print-color-adjust: exact;
+            }
+            
+            .section {
+                page-break-inside: avoid;
+            }
+            
+            .experience-item {
+                page-break-inside: avoid;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <h1>{{ name or "Professional Resume" }}</h1>
+            {% if title %}
+            <div class="title">{{ title }}</div>
+            {% endif %}
+            <div class="contact-info">
+                {% if email %}
+                <span>📧 {{ email }}</span>
+                {% endif %}
+                {% if phone %}
+                <span>📱 {{ phone }}</span>
+                {% endif %}
+                {% if location %}
+                <span>📍 {{ location }}</span>
+                {% endif %}
+                {% if linkedin %}
+                <span>💼 {{ linkedin }}</span>
+                {% endif %}
+                {% if website %}
+                <span>🌐 {{ website }}</span>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- Summary -->
+        {% if summary %}
+        <div class="section">
+            <h2>Professional Summary</h2>
+            <div class="summary">{{ summary }}</div>
+        </div>
+        {% endif %}
+
+        <!-- Experience -->
+        {% if experience and experience|length > 0 %}
+        <div class="section">
+            <h2>Professional Experience</h2>
+            {% for exp in experience %}
+            <div class="experience-item">
+                <div class="experience-header">
+                    <div>
+                        <div class="experience-title">{{ exp.title }}</div>
+                        <div class="experience-company">{{ exp.company }}</div>
+                    </div>
+                    <div class="experience-meta">
+                        <div>{{ exp.location }}</div>
+                        <div>{{ exp.years }}</div>
+                    </div>
+                </div>
+                {% if exp.description %}
+                <div class="experience-description">
+                    <ul>
+                        {% for desc in exp.description %}
+                        <li>{{ desc }}</li>
+                        {% endfor %}
+                    </ul>
+                </div>
+                {% endif %}
+            </div>
+            {% endfor %}
+        </div>
+        {% endif %}
+
+        <!-- Education -->
+        {% if education and education|length > 0 %}
+        <div class="section">
+            <h2>Education</h2>
+            {% for edu in education %}
+            <div class="education-item">
+                <div class="education-info">
+                    <div class="education-degree">{{ edu.degree }}</div>
+                    <div class="education-institution">{{ edu.institution }}</div>
+                    <div class="education-years">{{ edu.years }}</div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        {% endif %}
+
+        <!-- Skills -->
+        {% if skills and skills|length > 0 %}
+        <div class="section">
+            <h2>Core Competencies</h2>
+            <div class="skills-grid">
+                {% for skill in skills %}
+                <span class="skill-tag">{{ skill }}</span>
+                {% endfor %}
+            </div>
+        </div>
+        {% endif %}
+    </div>
+</body>
+</html>

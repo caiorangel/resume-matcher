@@ -1,35 +1,33 @@
+'use client';
+
+import React from 'react';
 import Link from 'next/link';
+import LanguageSelector from '@/components/common/language_selector';
 
-const Header = () => {
-	return (
-		<header className="sticky top-0 left-0 z-50 w-full bg-white shadow-sm">
-			<div className="container mx-auto flex h-16 items-center justify-between px-6">
-				{/* Logo */}
-				<Link href="/" className="text-xl font-bold text-gray-900">
-					munch
-				</Link>
+export default function Header() {
+  return (
+    <header className="sticky top-0 left-0 z-50 w-full bg-zinc-900/80 backdrop-blur-sm border-b border-zinc-800">
+      <div className="container mx-auto flex h-16 items-center justify-between px-6">
+        {/* Logo */}
+        <Link href="/" className="text-xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-purple-500">
+          Resume Matcher
+        </Link>
 
-				{/* Navigation */}
-				<nav className="flex items-center space-x-6">
-					<Link href="/overview" className="text-sm text-gray-600 hover:text-gray-900">
-						Overview
-					</Link>
-					<Link href="/signup" className="text-sm text-gray-600 hover:text-gray-900">
-						Sign up
-					</Link>
-					<Link href="/blog" className="text-sm text-gray-600 hover:text-gray-900">
-						Blog
-					</Link>
-					<Link
-						href="/buy"
-						className="rounded-md bg-teal-400 px-4 py-2 text-sm font-medium text-white transition-colors duration-200 hover:bg-teal-500"
-					>
-						Buy Spazio Bianco
-					</Link>
-				</nav>
-			</div>
-		</header>
-	);
-};
-
-export default Header;
+        {/* Navigation and Language Selector */}
+        <div className="flex items-center space-x-4">
+          <nav className="flex items-center space-x-6">
+            <Link href="/resume" className="text-sm text-gray-300 hover:text-white transition-colors">
+              Resume Analysis
+            </Link>
+            <Link href="/jobs" className="text-sm text-gray-300 hover:text-white transition-colors">
+              Job Listings
+            </Link>
+          </nav>
+          
+          {/* Language Selector */}
+          <LanguageSelector />
+        </div>
+      </div>
+    </header>
+  );
+}

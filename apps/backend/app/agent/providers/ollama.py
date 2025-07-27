@@ -47,7 +47,7 @@ class OllamaProvider(Provider):
             "temperature": generation_args.get("temperature", 0),
             "top_p": generation_args.get("top_p", 0.9),
             "top_k": generation_args.get("top_k", 40),
-            "num_ctx": generation_args.get("max_length", 20000),
+            "num_ctx": min(generation_args.get("max_length", 15000), 16000),
         }
         return await run_in_threadpool(self._generate_sync, prompt, opts)
 

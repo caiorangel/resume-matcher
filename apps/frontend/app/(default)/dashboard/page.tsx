@@ -1,14 +1,16 @@
 // File: apps/frontend/app/dashboard/page.tsx
 
-
 'use client';
 
-import React from 'react';
+import React, { useState } from 'react';
 import BackgroundContainer from '@/components/common/background-container';
 import JobListings from '@/components/dashboard/job-listings';
 import ResumeAnalysis from '@/components/dashboard/resume-analysis';
 import Resume from '@/components/dashboard/resume-component'; // rename import to match default export
 import { useResumePreview } from '@/components/common/resume_previewer_context';
+import { useLanguage } from '@/components/common/language_context';
+import { downloadResumePDF } from '@/lib/api/pdf';
+import { Button } from '@/components/ui/button';
 // import { analyzeJobDescription } from '@/lib/api/jobs';
 
 interface AnalyzedJobData {
@@ -68,26 +70,51 @@ const mockResumeData = {
 
 export default function DashboardPage() {
 	const { improvedData } = useResumePreview();
+	const { t, language } = useLanguage();
+	const [isDownloadingPDF, setIsDownloadingPDF] = useState(false);
+	const [pdfError, setPdfError] = useState<string | null>(null);
+	
 	console.log('Improved Data:', improvedData);
 	if (!improvedData) {
 		return (
 			<BackgroundContainer className="min-h-screen" innerClassName="bg-zinc-950">
 				<div className="flex items-center justify-center h-full p-6 text-gray-400">
-					No improved resume found. Please click “Improve” on the Job Upload page first.
+					No improved resume found. Please click "Improve" on the Job Upload page first.
 				</div>
 			</BackgroundContainer>
 		);
 	}
 
 	const { data } = improvedData;
-	const { resume_preview, new_score } = data;
+	const { resume_preview, new_score, original_score } = data;
 	const preview = resume_preview ?? mockResumeData;
 	const newPct = Math.round(new_score * 100);
+	const originalPct = Math.round(original_score * 100);
 
 	const handleJobUpload = async (text: string): Promise<AnalyzedJobData | null> => {
 		void text; // Prevent unused variable warning
 		alert('Job analysis not implemented yet.');
 		return null;
+	};
+
+	const handleDownloadPDF = async () => {
+		if (!improvedData) return;
+		
+		setIsDownloadingPDF(true);
+		setPdfError(null);
+		
+		try {
+			await downloadResumePDF(
+				improvedData.data.resume_id,
+				improvedData.data.job_id,
+				language
+			);
+		} catch (error) {
+			console.error('PDF download error:', error);
+			setPdfError(t('dashboard.pdfError'));
+		} finally {
+			setIsDownloadingPDF(false);
+		}
 	};
 
 
@@ -98,14 +125,14 @@ export default function DashboardPage() {
 				<div className="container mx-auto">
 					<div className="mb-10">
 						<h1 className="text-3xl font-semibold pb-2 text-white">
-							Your{' '}
+							{t('dashboard.title').split(' ').slice(0, 1).join(' ')}{' '}
 							<span className="bg-gradient-to-r from-pink-400 to-purple-400 text-transparent bg-clip-text">
 								Resume Matcher
 							</span>{' '}
-							Dashboard
+							{t('dashboard.title').split(' ').slice(-1).join(' ')}
 						</h1>
 						<p className="text-gray-300 text-lg">
-							Manage your resume and analyze its match with job descriptions.
+							{t('dashboard.subtitle')}
 						</p>
 					</div>
 
@@ -119,6 +146,7 @@ export default function DashboardPage() {
 							<section>
 								<ResumeAnalysis
 									score={newPct}
+									originalScore={originalPct}
 									details={improvedData.data.details ?? ''}
 									commentary={improvedData.data.commentary ?? ''}
 									improvements={improvedData.data.improvements ?? []}
@@ -130,10 +158,38 @@ export default function DashboardPage() {
 						<div className="md:col-span-2">
 							<div className="bg-gray-900/70 backdrop-blur-sm p-6 rounded-lg shadow-xl h-full flex flex-col border border-gray-800/50">
 								<div className="mb-6">
-									<h2 className="text-2xl font-bold text-white mb-1">Your Resume</h2>
-									<p className="text-gray-400 text-sm">
-										This is your resume. Update it via the resume upload page.
-									</p>
+									<div className="flex justify-between items-start mb-4">
+										<div>
+											<h2 className="text-2xl font-bold text-white mb-1">{t('dashboard.yourResume')}</h2>
+											<p className="text-gray-400 text-sm">
+												{t('dashboard.updateResume')}
+											</p>
+										</div>
+										<Button
+											onClick={handleDownloadPDF}
+											disabled={isDownloadingPDF}
+											className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md font-medium transition-colors duration-200 flex items-center gap-2"
+										>
+											{isDownloadingPDF ? (
+												<>
+													<div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
+													{t('dashboard.downloadingPDF')}
+												</>
+											) : (
+												<>
+													<svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+														<path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+													</svg>
+													{t('dashboard.downloadPDF')}
+												</>
+											)}
+										</Button>
+									</div>
+									{pdfError && (
+										<div className="text-red-400 text-sm mt-2">
+											{pdfError}
+										</div>
+									)}
 								</div>
 								<div className="flex-grow overflow-auto">
 									<Resume resumeData={preview} />

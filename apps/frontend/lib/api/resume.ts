@@ -21,14 +21,19 @@ export async function uploadJobDescriptions(
 /** Improves the resume and returns the full preview object */
 export async function improveResume(
     resumeId: string,
-    jobId: string
+    jobId: string,
+    language?: string
 ): Promise<ImprovedResult> {
     let response: Response;
     try {
         response = await fetch(`${API_URL}/api/v1/resumes/improve`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ resume_id: resumeId, job_id: jobId }),
+            body: JSON.stringify({ 
+                resume_id: resumeId, 
+                job_id: jobId,
+                language: language || 'en'
+            }),
         });
     } catch (networkError) {
         console.error('Network error during improveResume:', networkError);
@@ -51,4 +56,49 @@ export async function improveResume(
 
     console.log('Resume improvement response:', data);
     return data;
+}
+
+/**
+ * Uploads a resume file and returns the resume ID
+ * @param file - The resume file to upload
+ * @returns The uploaded resume ID
+ */
+export async function uploadResume(file: File): Promise<string> {
+    const formData = new FormData();
+    formData.append('file', file);
+    
+    const res = await fetch(`${API_URL}/api/v1/resumes/upload`, {
+        method: 'POST',
+        body: formData,
+    });
+    
+    if (!res.ok) throw new Error(`Upload failed with status ${res.status}`);
+    
+    const data = await res.json();
+    return data.resume_id;
+}
+
+/**
+ * Analyze resume and job description
+ * @param resumeFile - The resume file to analyze
+ * @param jobDescription - The job description text
+ * @returns Analysis result
+ */
+export async function analyzeResumeAndJob(
+    resumeFile: File,
+    jobDescription: string
+): Promise<{ resumeId: string; jobId: string }> {
+    try {
+        // Upload resume
+        const resumeId = await uploadResume(resumeFile);
+        
+        // Upload job description
+        const jobId = await uploadJobDescriptions([jobDescription], resumeId);
+        
+        // Return IDs for further processing
+        return { resumeId, jobId };
+    } catch (error) {
+        console.error('Error analyzing resume and job description:', error);
+        throw error;
+    }
 }

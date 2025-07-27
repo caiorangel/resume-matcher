@@ -5,6 +5,7 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import { Textarea } from '@/components/ui/textarea';
 import { Button } from '@/components/ui/button';
 import { useResumePreview } from '@/components/common/resume_previewer_context';
+import { useLanguage } from '@/components/common/language_context';
 import { uploadJobDescriptions, improveResume } from '@/lib/api/resume';
 
 type SubmissionStatus = 'idle' | 'submitting' | 'success' | 'error';
@@ -18,6 +19,7 @@ export default function JobDescriptionUploadTextArea() {
 	const [jobId, setJobId] = useState<string | null>(null);
 
 	const { setImprovedData } = useResumePreview();
+	const { language } = useLanguage();
 	const resumeId = useSearchParams().get('resume_id')!;
 	const router = useRouter();
 
@@ -63,7 +65,7 @@ export default function JobDescriptionUploadTextArea() {
 
 		setImprovementStatus('improving');
 		try {
-			const preview = await improveResume(resumeId, jobId);
+			const preview = await improveResume(resumeId, jobId, language);
 			setImprovedData(preview);
 			router.push('/dashboard');
 		} catch (err) {
@@ -71,7 +73,7 @@ export default function JobDescriptionUploadTextArea() {
 			setImprovementStatus('error');
 			setFlash({ type: 'error', message: (err as Error).message });
 		}
-	}, [resumeId, jobId, setImprovedData, router]);
+	}, [resumeId, jobId, language, setImprovedData, router]);
 
 	const isNextDisabled = text.trim() === '' || submissionStatus === 'submitting';
 

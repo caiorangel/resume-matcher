@@ -44,6 +44,7 @@ export interface Data {
     job_id: string;
     original_score: number;
     new_score: number;
+    validated_score?: number;
     resume_preview: ResumePreview;
     details?: string;
     commentary?: string;

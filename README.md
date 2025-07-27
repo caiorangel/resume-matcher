@@ -56,6 +56,7 @@ We're working on actively improving the platform, towards building a **VS Code f
 - **Instant Match Score**: Upload resume & job description for a quick match score and key improvement areas.
 - **Keyword Optimizer**: Align your resume with job keywords and identify critical content gaps.
 - **Guided Improvements**: Get clear suggestions to make your resume stand out.
+- **ATS Best Practices**: Follow industry-standard guidelines for optimizing resumes for Applicant Tracking Systems.
 
 ### Roadmap 
 
@@ -64,6 +65,7 @@ If you have any suggestions or feature requests, please feel free to open an iss
 - Visual keyword highlighting.
 - AI Canvas, which can help to craft impactful, metric-driven resume content.
 - Multi-job description optimization.
+- Enhanced ATS optimization guidelines and suggestions.
 
 ## How to Install
 

@@ -12,6 +12,10 @@ class EmploymentTypeEnum(str, enum.Enum):
     CONTRACT = "Contract"
     INTERNSHIP = "Internship"
     TEMPORARY = "Temporary"
+    CLT = "CLT"
+    PJ = "PJ"
+    FREELANCER = "Freelancer"
+    ESTAGIO = "Estágio"
     NOT_SPECIFIED = "Not Specified"
 
     @classmethod
@@ -24,7 +28,7 @@ class EmploymentTypeEnum(str, enum.Enum):
                 return mapping[value_lower]
 
         raise ValueError(
-            "employment type must be one of: Full-time, Part-time, Contract, Internship, Temporary, Not Specified (case insensitive)"
+            "employment type must be one of: Full-time, Part-time, Contract, Internship, Temporary, CLT, PJ, Freelancer, Estágio, Not Specified (case insensitive)"
         )
 
 

@@ -1,12 +1,64 @@
 'use client';
 
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useResumePreview } from '@/components/common/resume_previewer_context';
+import { useLanguage } from '@/components/common/language_context';
+import BackgroundContainer from '@/components/common/background-container';
+import ResumeAnalysis from '@/components/dashboard/resume-analysis';
+import Resume from '@/components/dashboard/resume-component';
+import { downloadResumePDF } from '@/lib/api/pdf';
+import { Button } from '@/components/ui/button';
+
+// Helper function to convert backend data to frontend format
+const convertToResumeFormat = (backendData: any) => {
+  if (!backendData) return null;
+  
+  console.log('Converting backend data:', backendData);
+  
+  // The backend is now returning already formatted data, so we use it directly
+  const personalInfo = backendData.personalInfo || {};
+  const experience = backendData.experience || [];
+  const education = backendData.education || [];
+  const skills = backendData.skills || [];
+  
+  return {
+    personalInfo: {
+      name: personalInfo.name || 'N/A',
+      title: personalInfo.title || (experience.length > 0 ? experience[0].title : 'Professional'),
+      email: personalInfo.email || '',
+      phone: personalInfo.phone || '',
+      location: personalInfo.location || '',
+      linkedin: personalInfo.linkedin || '',
+      github: personalInfo.github || '',
+      website: personalInfo.website || ''
+    },
+    summary: backendData.summary || 'Professional with extensive experience in their field.',
+    experience: experience.map((exp: any, index: number) => ({
+      id: index + 1, // Force unique IDs using array index
+      title: exp.title || '',
+      company: exp.company || '',
+      location: exp.location || '',
+      years: exp.years || '',
+      description: exp.description || []
+    })),
+    education: education.map((edu: any, index: number) => ({
+      id: index + 1, // Force unique IDs using array index
+      institution: edu.institution || '',
+      degree: edu.degree || '',
+      years: edu.years || '',
+      description: edu.description || ''
+    })),
+    skills: Array.isArray(skills) ? skills.filter(Boolean) : []
+  };
+};
 
 export default function ResultsPage() {
   const router = useRouter();
   const { improvedData } = useResumePreview();
+  const { t, language } = useLanguage();
+  const [isDownloadingPDF, setIsDownloadingPDF] = useState(false);
+  const [pdfError, setPdfError] = useState<string | null>(null);
 
   // Redirect to home if there's no data
   useEffect(() => {
@@ -24,104 +76,131 @@ export default function ResultsPage() {
     );
   }
 
-  // Extract data from the improvedData structure
-  const data = improvedData.data;
-  const matchScore = data.new_score || data.original_score;
-  const improvements = data.improvements?.map(item => item.suggestion) || [];
+  const { data } = improvedData;
+  const { resume_preview, new_score, original_score } = data;
+  
+  // Convert backend data to frontend format
+  const convertedPreview = convertToResumeFormat(resume_preview);
+  
+  // If no converted data, show message
+  if (!convertedPreview) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-gray-900 via-indigo-900/90 to-purple-900/90 flex items-center justify-center">
+        <div className="text-white text-xl">No resume data available</div>
+      </div>
+    );
+  }
+  
+  // Convert scores to percentages (assuming they come as decimals like 0.75)
+  const newPct = Math.round((new_score || 0) * 100);
+  const originalPct = Math.round((original_score || 0) * 100);
+
+  const handleDownloadPDF = async () => {
+    if (!improvedData) return;
+    
+    setIsDownloadingPDF(true);
+    setPdfError(null);
+    
+    try {
+      await downloadResumePDF(
+        improvedData.data.resume_id,
+        improvedData.data.job_id,
+        language
+      );
+    } catch (error) {
+      console.error('PDF download error:', error);
+      setPdfError('Failed to download PDF. Please try again.');
+    } finally {
+      setIsDownloadingPDF(false);
+    }
+  };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-900 via-indigo-900/90 to-purple-900/90 py-16 px-4">
-      <div className="max-w-6xl mx-auto">
-        <div className="text-center mb-12">
-          <h1 className="text-4xl font-bold text-white mb-4">Resume Analysis Results</h1>
-          <p className="text-xl text-gray-300">Here's how you can improve your resume</p>
-        </div>
+    <BackgroundContainer className="min-h-screen" innerClassName="bg-zinc-950 backdrop-blur-sm overflow-auto">
+      <div className="w-full h-full overflow-auto py-8 px-4 sm:px-6 lg:px-8">
+        <div className="container mx-auto">
+          {/* Header */}
+          <div className="mb-10 text-center">
+            <h1 className="text-4xl font-bold text-white mb-4">
+              Resume Analysis
+              <span className="bg-gradient-to-r from-pink-400 to-purple-400 text-transparent bg-clip-text ml-2">
+                Results
+              </span>
+            </h1>
+            <p className="text-xl text-gray-300">
+              Here's how your resume has been optimized for the job
+            </p>
+          </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-          {/* Match Score */}
-          <div className="bg-zinc-800/50 backdrop-blur-2xl p-8 rounded-2xl border border-gray-700">
-            <h2 className="text-2xl font-bold text-white mb-6">Match Score</h2>
-            <div className="flex items-center justify-center">
-              <div className="relative">
-                <svg className="w-48 h-48" viewBox="0 0 100 100">
-                  <circle
-                    className="text-gray-700"
-                    strokeWidth="8"
-                    stroke="currentColor"
-                    fill="transparent"
-                    r="40"
-                    cx="50"
-                    cy="50"
-                  />
-                  <circle
-                    className="text-indigo-500"
-                    strokeWidth="8"
-                    strokeDasharray={`${(matchScore / 100) * 251.2}, 251.2`}
-                    strokeLinecap="round"
-                    stroke="currentColor"
-                    fill="transparent"
-                    r="40"
-                    cx="50"
-                    cy="50"
-                    transform="rotate(-90 50 50)"
-                  />
-                  <text
-                    x="50"
-                    y="50"
-                    textAnchor="middle"
-                    dy="7"
-                    fontSize="20"
-                    fill="white"
-                    fontWeight="bold"
-                  >
-                    {matchScore}%
-                  </text>
-                </svg>
+          {/* Grid: left = analysis, right = resume */}
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            {/* Left column - Analysis */}
+            <div className="space-y-8">
+              <section>
+                <ResumeAnalysis
+                  score={newPct}
+                  originalScore={originalPct}
+                  details={data.details ?? 'Your resume has been analyzed and optimized.'}
+                  commentary={data.commentary ?? 'Resume analysis completed successfully.'}
+                  improvements={data.improvements ?? []}
+                />
+              </section>
+            </div>
+
+            {/* Right column - Resume Preview */}
+            <div className="lg:col-span-2">
+              <div className="bg-gray-900/70 backdrop-blur-sm p-6 rounded-lg shadow-xl h-full flex flex-col border border-gray-800/50">
+                <div className="mb-6">
+                  <div className="flex justify-between items-start mb-4">
+                    <div>
+                      <h2 className="text-2xl font-bold text-white mb-1">Your Optimized Resume</h2>
+                      <p className="text-gray-400 text-sm">
+                        Review your improved resume below
+                      </p>
+                    </div>
+                    <div className="flex gap-3">
+                      <Button
+                        onClick={handleDownloadPDF}
+                        disabled={isDownloadingPDF}
+                        className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-md font-medium transition-colors duration-200 flex items-center gap-2"
+                      >
+                        {isDownloadingPDF ? (
+                          <>
+                            <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
+                            Downloading...
+                          </>
+                        ) : (
+                          <>
+                            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                            </svg>
+                            Download PDF
+                          </>
+                        )}
+                      </Button>
+                      <Button
+                        onClick={() => router.push('/')}
+                        variant="outline"
+                        className="text-gray-300 border-gray-600 hover:bg-gray-700 px-4 py-2 rounded-md font-medium transition-colors duration-200"
+                      >
+                        Back to Home
+                      </Button>
+                    </div>
+                  </div>
+                  {pdfError && (
+                    <div className="text-red-400 text-sm mt-2">
+                      {pdfError}
+                    </div>
+                  )}
+                </div>
+                <div className="flex-grow overflow-auto">
+                  <Resume resumeData={convertedPreview} />
+                </div>
               </div>
             </div>
           </div>
-
-          {/* Improvements */}
-          <div className="bg-zinc-800/50 backdrop-blur-2xl p-8 rounded-2xl border border-gray-700">
-            <h2 className="text-2xl font-bold text-white mb-6">Suggested Improvements</h2>
-            <ul className="space-y-4">
-              {improvements.map((improvement, index) => (
-                <li key={index} className="flex items-start">
-                  <div className="bg-indigo-500/10 p-2 rounded-full mr-4 mt-1">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-indigo-400">
-                      <polyline points="20 6 9 17 4 12"></polyline>
-                    </svg>
-                  </div>
-                  <span className="text-gray-300">{improvement}</span>
-                </li>
-              ))}
-            </ul>
-          </div>
-
-          {/* Improved Resume Preview */}
-          <div className="lg:col-span-2 bg-zinc-800/50 backdrop-blur-2xl p-8 rounded-2xl border border-gray-700">
-            <h2 className="text-2xl font-bold text-white mb-6">Improved Resume Preview</h2>
-            <div className="bg-zinc-900/50 border border-gray-700 rounded-xl p-6">
-              <pre className="text-gray-300 whitespace-pre-wrap">
-                {data.details || 'No preview available'}
-              </pre>
-            </div>
-          </div>
-        </div>
-
-        <div className="mt-12 text-center">
-          <button
-            onClick={() => router.push('/')}
-            className="inline-flex items-center px-6 py-3 bg-indigo-600 hover:bg-indigo-700 text-white font-medium rounded-lg transition-colors duration-300"
-          >
-            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="mr-2">
-              <line x1="19" y1="12" x2="5" y2="12"></line>
-              <polyline points="12 19 5 12 12 5"></polyline>
-            </svg>
-            Back to Home
-          </button>
         </div>
       </div>
-    </div>
+    </BackgroundContainer>
   );
 }

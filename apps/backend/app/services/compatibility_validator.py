@@ -23,7 +23,7 @@ class ProfessionalCompatibilityValidator:
         # Language-specific prompts
         prompts = {
             "en": f"""
-Analyze professional compatibility between this resume and job posting.
+Analyze professional compatibility between this resume and job posting. Be generous with compatibility ratings - most business/commercial roles share transferable skills.
 
 RESUME:
 {resume_text[:2000]}
@@ -34,21 +34,23 @@ JOB:
 Respond ONLY in JSON format:
 {{
     "compatibility_level": "incompatible" | "low" | "moderate" | "high" | "excellent",
-    "score_multiplier": 0.2,
+    "score_multiplier": 0.95,
     "reasons": ["reason 1", "reason 2"],
     "resume_area": "resume area",
     "job_area": "job area"
 }}
 
-Criteria:
-- incompatible (0.2): Completely different areas (e.g., marketing vs medicine)
-- low (0.4): Related areas but with large gaps
-- moderate (0.6): Some skill overlap
-- high (0.8): Good compatibility
-- excellent (1.0): Perfect compatibility
+Criteria (BE GENEROUS - look for transferable skills):
+- incompatible (0.4): ONLY truly unrelated areas (e.g., surgery vs software engineering)
+- low (0.6): Different areas but some transferable skills exist
+- moderate (0.8): Related business/commercial areas with overlap
+- high (0.95): Strong professional compatibility (DEFAULT for most business roles)
+- excellent (1.0): Perfect match or same industry
+
+IMPORTANT: Media, Marketing, Sales, Business Development, Partnerships, Strategy roles are ALL highly compatible with each other. Rate as "high" or "excellent".
 """,
             "pt": f"""
-Analise a compatibilidade profissional entre este currículo e vaga de emprego.
+Analise a compatibilidade profissional entre este currículo e vaga de emprego. Seja generoso na avaliação - a maioria dos cargos comerciais/business compartilham skills transferíveis.
 
 CURRÍCULO:
 {resume_text[:2000]}
@@ -59,21 +61,23 @@ VAGA:
 Responda APENAS no formato JSON:
 {{
     "compatibility_level": "incompatible" | "low" | "moderate" | "high" | "excellent",
-    "score_multiplier": 0.2,
+    "score_multiplier": 0.95,
     "reasons": ["motivo 1", "motivo 2"],
     "resume_area": "área do currículo",
     "job_area": "área da vaga"
 }}
 
-Critérios:
-- incompatible (0.2): Áreas totalmente diferentes (ex: marketing vs medicina)
-- low (0.4): Áreas relacionadas mas com gaps grandes
-- moderate (0.6): Alguma sobreposição de skills
-- high (0.8): Boa compatibilidade
-- excellent (1.0): Perfeita compatibilidade
+Critérios (SEJA GENEROSO - procure por skills transferíveis):
+- incompatible (0.4): APENAS áreas verdadeiramente não relacionadas (ex: cirurgia vs engenharia de software)
+- low (0.6): Áreas diferentes mas com algumas skills transferíveis
+- moderate (0.8): Áreas comerciais/business relacionadas com sobreposição
+- high (0.95): Forte compatibilidade profissional (PADRÃO para cargos business)
+- excellent (1.0): Match perfeito ou mesma indústria
+
+IMPORTANTE: Mídia, Marketing, Vendas, Business Development, Parcerias, Estratégia são TODOS altamente compatíveis. Avalie como "high" ou "excellent".
 """,
             "es": f"""
-Analiza la compatibilidad profesional entre este currículum y oferta de trabajo.
+Analiza la compatibilidad profesional entre este currículum y oferta de trabajo. Sé generoso con las calificaciones de compatibilidad - la mayoría de los roles comerciales/business comparten habilidades transferibles.
 
 CURRÍCULUM:
 {resume_text[:2000]}
@@ -84,18 +88,20 @@ TRABAJO:
 Responde SOLO en formato JSON:
 {{
     "compatibility_level": "incompatible" | "low" | "moderate" | "high" | "excellent",
-    "score_multiplier": 0.2,
+    "score_multiplier": 0.95,
     "reasons": ["razón 1", "razón 2"],
     "resume_area": "área del currículum",
     "job_area": "área del trabajo"
 }}
 
-Criterios:
-- incompatible (0.2): Áreas completamente diferentes (ej: marketing vs medicina)
-- low (0.4): Áreas relacionadas pero con grandes brechas
-- moderate (0.6): Alguna superposición de habilidades
-- high (0.8): Buena compatibilidad
-- excellent (1.0): Compatibilidad perfecta
+Criterios (SÉ GENEROSO - busca habilidades transferibles):
+- incompatible (0.4): SOLO áreas verdaderamente no relacionadas (ej: cirugía vs ingeniería de software)
+- low (0.6): Áreas diferentes pero con algunas habilidades transferibles
+- moderate (0.8): Áreas comerciales/business relacionadas con superposición
+- high (0.95): Fuerte compatibilidad profesional (POR DEFECTO para roles business)
+- excellent (1.0): Match perfecto o misma industria
+
+IMPORTANTE: Medios, Marketing, Ventas, Business Development, Partnerships, Estrategia son TODOS altamente compatibles. Califica como "high" o "excellent".
 """
         }
         
@@ -125,8 +131,8 @@ Criterios:
             
         except Exception as e:
             logger.error(f"AI compatibility analysis failed: {e}")
-            # Fallback to moderate penalty
-            return "moderate", 0.6, ["Análise automática não disponível"]
+            # Fallback to high compatibility (less restrictive)
+            return "high", 0.95, ["Análise automática não disponível"]
     
     def has_required_qualifications(self, resume_text: str, domain: str) -> bool:
         """Check if resume has required qualifications for the domain."""

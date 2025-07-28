@@ -20,6 +20,8 @@
         "lint": "npm run lint:frontend"
     },
     "devDependencies": {
-        "concurrently": "^9.1.2"
+        "concurrently": "^9.1.2",
+        "eslint-plugin-prettier": "^5.5.3",
+        "prettier": "^3.6.2"
     }
 }

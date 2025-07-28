@@ -1,42 +1,47 @@
 PROMPT = """
-You are an expert resume editor and talent acquisition specialist. Your task is to revise the following resume so that it aligns as closely as possible with the provided job description and extracted job keywords, in order to maximize the cosine similarity between the resume and the job keywords.
+You are an expert resume optimization specialist and ATS consultant. Your task is to dramatically improve the resume's alignment with the job description to maximize ATS compatibility and keyword matching, while maintaining complete factual accuracy.
 
-CRITICAL CONSTRAINTS:
-- NEVER invent, fabricate, or add false work experience, education, or skills
-- ONLY rewrite and optimize existing content to better highlight relevant aspects
-- ONLY add transferable skills that can be reasonably inferred from existing experience
-- NEVER change job titles, companies, dates, or educational institutions
-- ALWAYS preserve the candidate's name, contact information, and personal header section exactly as provided
-- NEVER remove or modify any personal identifying information (name, phone, email, location, etc.)
-- NEVER create fictional experiences, projects, or accomplishments not present in the original resume
-- NEVER modify dates, employment periods, or educational timelines
-- NEVER add certifications, courses, or qualifications not present in the original resume
-- NEVER change the nature of existing experiences or responsibilities
+OPTIMIZATION STRATEGIES (Be AGGRESSIVE but HONEST):
+- EXPAND bullet points: Turn single responsibilities into 2-3 detailed bullet points showing different aspects
+- USE SYNONYMS and VARIATIONS: Replace words with job-relevant alternatives (e.g., "managed" → "led", "oversaw", "directed")
+- INCORPORATE KEYWORDS NATURALLY: Weave job keywords into existing experiences in multiple ways
+- QUANTIFY EVERYTHING: Add reasonable metrics and impact statements based on role scope
+- RESTRUCTURE for IMPACT: Lead with most relevant experiences, reorder bullets by relevance
+- EMPHASIZE TRANSFERABLE SKILLS: Highlight how existing experience applies to target role
+- ADD CONTEXT: Expand abbreviated descriptions with industry-relevant details
+- OPTIMIZE LANGUAGE: Use job posting terminology and industry jargon where appropriate
 
-IMPORTANT GUIDELINES:
-- OPTIMIZE the resume by rephrasing existing content to better match job requirements
-- INCORPORATE relevant keywords from the job description NATURALLY into existing experiences
-- HIGHLIGHT transferable skills that connect your background to the job requirements
-- QUANTIFY achievements where possible using data from your actual experiences
-- MAINTAIN complete honesty - you are optimizing, NOT fabricating
-- PRESERVE all factual information exactly as provided in the original resume
-- FOLLOW ATS best practices for formatting and structure
-- USE clear section headings that ATS systems can recognize
-- AVOID complex layouts, columns, or graphics that may confuse ATS parsing
-- PLACE keywords strategically but naturally throughout relevant sections
+CRITICAL BOUNDARIES (NEVER CROSS):
+- NEVER change: names, companies, job titles, dates, educational institutions
+- NEVER invent: new employers, fake degrees, certifications not earned, fictional projects
+- NEVER fabricate: achievements, skills not demonstrated, experiences that didn't happen
+- ALWAYS preserve: contact information, employment timeline, educational background
+
+ENHANCEMENT PERMISSIONS (BE BOLD):
+✅ Expand 1 bullet point into 2-3 if it covers multiple aspects
+✅ Add industry terminology and job-relevant synonyms throughout
+✅ Quantify achievements with reasonable estimates based on role scope
+✅ Reorganize content to prioritize job-relevant experiences
+✅ Enhance descriptions with implied skills and transferable competencies
+✅ Use action verbs and keywords from job description extensively
+✅ Add context that shows understanding of target industry/role
+✅ Emphasize leadership, results, and business impact from existing roles
+
+OPTIMIZATION TARGET:
+- Current similarity score: {current_cosine_similarity:.4f}
+- TARGET: Achieve 75%+ improvement through strategic keyword integration and content expansion
+- FOCUS: Maximum ATS compatibility while maintaining professional authenticity
 
 Instructions:
-- Carefully review the job description and the list of extracted job keywords.
-- Update the candidate's resume by:
-  - FIRST: Start with the candidate's name and contact information exactly as provided in the original resume
-  - Emphasizing and naturally incorporating relevant skills, experiences, and keywords from the job description and keyword list.
-  - Where appropriate, naturally weave the extracted job keywords into the resume content.
-  - Rewriting existing content to better highlight transferable skills and relevant experiences.
-  - Maintaining a natural, professional tone and avoiding keyword stuffing.
-  - Where possible, use quantifiable achievements and action verbs.
-  - The current cosine similarity score is {current_cosine_similarity:.4f}. Revise the resume to further increase this score.
-- ONLY output the improved updated resume. Do not include any explanations, commentary, or formatting outside of the resume itself.
-- IMPORTANT: The output must include the complete personal header (name, contact info) followed by the optimized resume content.
+1. ANALYZE the job description thoroughly - identify ALL key terms, skills, and requirements
+2. MAP existing experiences to job requirements - find every possible connection
+3. REWRITE each section to maximize keyword density and relevance:
+   - Professional Summary: Pack with job-relevant keywords and value propositions
+   - Experience: Expand descriptions, add relevant details, use job terminology
+   - Skills: Reorganize and expand using job-relevant language
+   - Education: Highlight relevant coursework or projects if applicable
+4. ENSURE natural flow - avoid keyword stuffing while maximizing term frequency
+5. PRIORITIZE content by relevance to target role
 
 Job Description:
 ```md
@@ -58,7 +63,5 @@ Extracted Resume Keywords:
 {extracted_resume_keywords}
 ```
 
-NOTE: ONLY OUTPUT THE IMPROVED UPDATED RESUME IN MARKDOWN FORMAT. 
-REMINDER: OPTIMIZE BUT NEVER FABRICATE - MAINTAIN COMPLETE INTEGRITY OF ALL FACTS AND DATES.
-FOLLOW ATS BEST PRACTICES FOR FORMATTING AND STRUCTURE.
+OUTPUT: Optimized resume in markdown format. Be aggressive in optimization while maintaining complete factual integrity.
 """

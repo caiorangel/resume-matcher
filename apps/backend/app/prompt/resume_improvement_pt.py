@@ -1,49 +1,54 @@
 PROMPT_PT = """
-Você é um editor de currículos especialista e recrutador. Sua tarefa é revisar o seguinte currículo para que se alinhe o máximo possível com a descrição da vaga e as palavras-chave extraídas, a fim de maximizar a similaridade cosseno entre o currículo e as palavras-chave da vaga.
+Você é um especialista em otimização de currículos e consultor ATS. Sua tarefa é melhorar dramaticamente o alinhamento do currículo com a descrição da vaga para maximizar a compatibilidade ATS e correspondência de palavras-chave, mantendo completa precisão factual.
 
-RESTRIÇÕES CRÍTICAS:
-- NUNCA invente, fabrique ou adicione experiências, formações ou habilidades falsas
-- APENAS reescreva e otimize o conteúdo existente para destacar aspectos relevantes
-- APENAS adicione habilidades transferíveis que possam ser razoavelmente inferidas da experiência existente
-- NUNCA altere cargos, empresas, datas ou instituições de ensino
-- SEMPRE preserve o nome do candidato, informações de contato e seção de cabeçalho pessoal exatamente como fornecido
-- NUNCA remova ou modifique qualquer informação de identificação pessoal (nome, telefone, email, localização, etc.)
-- NUNCA crie experiências, projetos ou realizações fictícias que não estejam presentes no currículo original
-- NUNCA modifique datas, períodos de emprego ou cronogramas educacionais
-- NUNCA adicione certificações, cursos ou qualificações que não estejam presentes no currículo original
-- NUNCA altere a natureza das experiências ou responsabilidades existentes
+ESTRATÉGIAS DE OTIMIZAÇÃO (Seja AGRESSIVO mas HONESTO):
+- EXPANDA bullet points: Transforme responsabilidades únicas em 2-3 bullets detalhados mostrando diferentes aspectos
+- USE SINÔNIMOS e VARIAÇÕES: Substitua palavras por alternativas relevantes à vaga (ex: "gerenciei" → "liderei", "supervisionei", "dirigi")
+- INCORPORE PALAVRAS-CHAVE NATURALMENTE: Teça palavras-chave da vaga nas experiências existentes de múltiplas formas
+- QUANTIFIQUE TUDO: Adicione métricas razoáveis e declarações de impacto baseadas no escopo do cargo
+- REESTRUTURE para IMPACTO: Lidere com experiências mais relevantes, reordene bullets por relevância
+- ENFATIZE HABILIDADES TRANSFERÍVEIS: Destaque como experiência existente se aplica ao cargo alvo
+- ADICIONE CONTEXTO: Expanda descrições abreviadas com detalhes relevantes à indústria
+- OTIMIZE LINGUAGEM: Use terminologia da vaga e jargão da indústria quando apropriado
 
-DIRETRIZES IMPORTANTES:
-- OTIMIZE o currículo reescrevendo o conteúdo existente para corresponder melhor aos requisitos da vaga
-- INCORPORE palavras-chave relevantes da descrição da vaga NATURALMENTE nas experiências existentes
-- DESTAQUE habilidades transferíveis que conectem seu histórico aos requisitos da vaga
-- QUANTIFIQUE conquistas onde possível usando dados de suas experiências reais
-- MANTENHA completa honestidade - você está otimizando, NÃO fabricando
-- PRESERVE todas as informações fáticas exatamente como fornecidas no currículo original
-- SIGA as melhores práticas ATS para formatação e estrutura
-- USE cabeçalhos de seção padrão que os sistemas ATS possam reconhecer
-- EVITE layouts complexos, colunas ou gráficos que possam confundir a análise do ATS
-- COLOQUE palavras-chave estrategicamente mas naturalmente em todas as seções relevantes
+LIMITES CRÍTICOS (NUNCA ULTRAPASSE):
+- NUNCA altere: nomes, empresas, cargos, datas, instituições de ensino
+- NUNCA invente: novos empregadores, diplomas falsos, certificações não obtidas, projetos fictícios
+- NUNCA fabrique: conquistas, habilidades não demonstradas, experiências que não aconteceram
+- SEMPRE preserve: informações de contato, cronologia de emprego, formação educacional
+
+PERMISSÕES DE MELHORIA (SEJA OUSADO):
+✅ Expandir 1 bullet point em 2-3 se cobrir múltiplos aspectos
+✅ Adicionar terminologia da indústria e sinônimos relevantes à vaga
+✅ Quantificar conquistas com estimativas razoáveis baseadas no escopo do cargo
+✅ Reorganizar conteúdo para priorizar experiências relevantes à vaga
+✅ Melhorar descrições com habilidades implícitas e competências transferíveis
+✅ Usar verbos de ação e palavras-chave da descrição da vaga extensivamente
+✅ Adicionar contexto que mostre compreensão da indústria/cargo alvo
+✅ Enfatizar liderança, resultados e impacto nos negócios de cargos existentes
+
+META DE OTIMIZAÇÃO:
+- Pontuação atual de similaridade: {current_cosine_similarity:.4f}
+- META: Alcançar melhoria de 75%+ através de integração estratégica de palavras-chave e expansão de conteúdo
+- FOCO: Máxima compatibilidade ATS mantendo autenticidade profissional
 
 Instruções:
-- Revise cuidadosamente a descrição da vaga e a lista de palavras-chave extraídas.
-- Atualize o currículo do candidato:
-  - PRIMEIRO: Comece com o nome do candidato e informações de contato exatamente como fornecido no currículo original
-  - Enfatizando e incorporando naturalmente habilidades, experiências e palavras-chave relevantes da descrição da vaga e da lista de palavras-chave.
-  - Onde apropriado, tecendo naturalmente as palavras-chave extraídas no conteúdo do currículo.
-  - Reescrevendo o conteúdo existente para destacar melhor habilidades transferíveis e experiências relevantes.
-  - Mantendo um tom profissional natural e evitando encher o texto de palavras-chave.
-  - Onde possível, usando conquistas quantificáveis e verbos de ação.
-  - A pontuação de similaridade cosseno atual é {current_cosine_similarity:.4f}. Revise o currículo para aumentar ainda mais essa pontuação.
-- APENAS produza o currículo atualizado e melhorado. Não inclua explicações, comentários ou formatação fora do currículo em si.
-- IMPORTANTE: A saída deve incluir o cabeçalho pessoal completo (nome, informações de contato) seguido pelo conteúdo do currículo otimizado.
+1. ANALISE a descrição da vaga completamente - identifique TODOS os termos-chave, habilidades e requisitos
+2. MAPEIE experiências existentes para requisitos da vaga - encontre toda conexão possível
+3. REESCREVA cada seção para maximizar densidade e relevância de palavras-chave:
+   - Resumo Profissional: Preencha com palavras-chave relevantes à vaga e proposições de valor
+   - Experiência: Expanda descrições, adicione detalhes relevantes, use terminologia da vaga
+   - Habilidades: Reorganize e expanda usando linguagem relevante à vaga
+   - Educação: Destaque cursos ou projetos relevantes se aplicável
+4. GARANTA fluxo natural - evite stuffing de palavras-chave enquanto maximiza frequência de termos
+5. PRIORIZE conteúdo por relevância ao cargo alvo
 
 Descrição da Vaga:
 ```md
 {raw_job_description}
 ```
 
-Palavras-Chave Extraídas da Vaga:
+Palavras-chave Extraídas da Vaga:
 ```md
 {extracted_job_keywords}
 ```
@@ -53,12 +58,10 @@ Currículo Original:
 {raw_resume}
 ```
 
-Palavras-Chave Extraídas do Currículo:
+Palavras-chave Extraídas do Currículo:
 ```md
 {extracted_resume_keywords}
 ```
 
-NOTA: APENAS PRODUZA O CURRÍCULO ATUALIZADO E MELHORADO EM FORMATO MARKDOWN.
-LEMBRETE: OTIMIZE MAS NUNCA FABRIQUE - MANTENHA A INTEGRIDADE COMPLETA DE TODOS OS FATOS E DATAS.
-SIGA AS MELHORES PRÁTICAS ATS PARA FORMATAÇÃO E ESTRUTURA.
+OUTPUT: Currículo otimizado em formato markdown. Seja agressivo na otimização mantendo completa integridade factual.
 """

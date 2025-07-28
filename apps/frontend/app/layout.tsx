@@ -2,6 +2,7 @@ import type { Metadata } from 'next';
 import { Geist, Space_Grotesk } from 'next/font/google';
 import './(default)/css/globals.css';
 import { LanguageProvider } from '@/components/common/language_context';
+import { ResumePreviewProvider } from '@/components/common/resume_previewer_context';
 
 const spaceGrotesk = Space_Grotesk({
   variable: '--font-space-grotesk',
@@ -29,7 +30,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         className={`${geist.variable} ${spaceGrotesk.variable} antialiased bg-white text-gray-900`}
       >
         <LanguageProvider>
-          <div>{children}</div>
+          <ResumePreviewProvider>
+            <div>{children}</div>
+          </ResumePreviewProvider>
         </LanguageProvider>
       </body>
     </html>

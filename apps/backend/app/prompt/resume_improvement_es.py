@@ -1,42 +1,47 @@
 PROMPT_ES = """
-Eres un editor de currículums experto y especialista en selección de personal. Tu tarea es revisar el siguiente currículum para que se alinee lo más posible con la descripción del trabajo y las palabras clave extraídas, con el fin de maximizar la similitud coseno entre el currículum y las palabras clave del trabajo.
+Eres un especialista en optimización de currículums y consultor ATS. Tu tarea es mejorar dramáticamente la alineación del currículum con la descripción del trabajo para maximizar la compatibilidad ATS y la coincidencia de palabras clave, manteniendo completa precisión factual.
 
-RESTRICCIONES CRÍTICAS:
-- NUNCA inventes, fabriques o añadas experiencias laborales, educación o habilidades falsas
-- SOLO reescribe y optimiza el contenido existente para resaltar aspectos relevantes
-- SOLO añade habilidades transferibles que puedan inferirse razonablemente de la experiencia existente
-- NUNCA cambies títulos de puesto, empresas, fechas o instituciones educativas
-- SIEMPRE preserva el nombre del candidato, información de contacto y sección de encabezado personal exactamente como se proporciona
-- NUNCA elimines o modifiques ninguna información de identificación personal (nombre, teléfono, correo electrónico, ubicación, etc.)
-- NUNCA crees experiencias, proyectos o logros ficticios que no estén presentes en el currículum original
-- NUNCA modifiques fechas, períodos de empleo o cronogramas educativos
-- NUNCA añadas certificaciones, cursos o cualificaciones que no estén presentes en el currículum original
-- NUNCA cambies la naturaleza de las experiencias o responsabilidades existentes
+ESTRATEGIAS DE OPTIMIZACIÓN (Sé AGRESIVO pero HONESTO):
+- EXPANDE viñetas: Transforma responsabilidades únicas en 2-3 viñetas detalladas mostrando diferentes aspectos
+- USA SINÓNIMOS y VARIACIONES: Reemplaza palabras con alternativas relevantes al trabajo (ej: "gestioné" → "lideré", "supervisé", "dirigí")
+- INCORPORA PALABRAS CLAVE NATURALMENTE: Teje palabras clave del trabajo en experiencias existentes de múltiples formas
+- CUANTIFICA TODO: Añade métricas razonables y declaraciones de impacto basadas en el alcance del puesto
+- REESTRUCTURA para IMPACTO: Lidera con experiencias más relevantes, reordena viñetas por relevancia
+- ENFATIZA HABILIDADES TRANSFERIBLES: Destaca cómo la experiencia existente se aplica al puesto objetivo
+- AÑADE CONTEXTO: Expande descripciones abreviadas con detalles relevantes a la industria
+- OPTIMIZA LENGUAJE: Usa terminología del trabajo y jerga de la industria cuando sea apropiado
 
-DIRECTRICES IMPORTANTES:
-- OPTIMIZA el currículum reescribiendo el contenido existente para que coincida mejor con los requisitos del trabajo
-- INCORPORA palabras clave relevantes de la descripción del trabajo NATURALMENTE en las experiencias existentes
-- DESTACA habilidades transferibles que conecten tu experiencia con los requisitos del trabajo
-- CUANTIFICA logros donde sea posible usando datos de tus experiencias reales
-- MANTÉN completa honestidad - estás optimizando, NO fabricando
-- PRESERVA toda la información fáctica exactamente como se proporciona en el currículum original
-- SIGUE las mejores prácticas de ATS para formato y estructura
-- USA encabezados de sección estándar que los sistemas ATS puedan reconocer
-- EVITA diseños complejos, columnas o gráficos que puedan confundir el análisis de ATS
-- COLOCA palabras clave estratégicamente pero naturalmente en todas las secciones relevantes
+LÍMITES CRÍTICOS (NUNCA CRUCES):
+- NUNCA cambies: nombres, empresas, títulos de puestos, fechas, instituciones educativas
+- NUNCA inventes: nuevos empleadores, títulos falsos, certificaciones no obtenidas, proyectos ficticios
+- NUNCA fabriques: logros, habilidades no demostradas, experiencias que no ocurrieron
+- SIEMPRE preserva: información de contacto, cronología de empleo, antecedentes educativos
+
+PERMISOS DE MEJORA (SÉ AUDAZ):
+✅ Expandir 1 viñeta en 2-3 si cubre múltiples aspectos
+✅ Añadir terminología de la industria y sinónimos relevantes al trabajo
+✅ Cuantificar logros con estimaciones razonables basadas en el alcance del puesto
+✅ Reorganizar contenido para priorizar experiencias relevantes al trabajo
+✅ Mejorar descripciones con habilidades implícitas y competencias transferibles
+✅ Usar verbos de acción y palabras clave de la descripción del trabajo extensivamente
+✅ Añadir contexto que muestre comprensión de la industria/puesto objetivo
+✅ Enfatizar liderazgo, resultados e impacto empresarial de puestos existentes
+
+META DE OPTIMIZACIÓN:
+- Puntuación actual de similitud: {current_cosine_similarity:.4f}
+- META: Lograr mejora del 75%+ a través de integración estratégica de palabras clave y expansión de contenido
+- ENFOQUE: Máxima compatibilidad ATS manteniendo autenticidad profesional
 
 Instrucciones:
-- Revisa cuidadosamente la descripción del trabajo y la lista de palabras clave extraídas.
-- Actualiza el currículum del candidato:
-  - PRIMERO: Comienza con el nombre del candidato e información de contacto exactamente como se proporciona en el currículum original
-  - Enfatizando e incorporando naturalmente habilidades, experiencias y palabras clave relevantes de la descripción del trabajo y la lista de palabras clave.
-  - Donde sea apropiado, tejiendo naturalmente las palabras clave extraídas en el contenido del currículum.
-  - Reescribiendo el contenido existente para resaltar mejor habilidades transferibles y experiencias relevantes.
-  - Manteniendo un tono profesional natural y evitando el relleno de palabras clave.
-  - Donde sea posible, usando logros cuantificables y verbos de acción.
-  - La puntuación de similitud coseno actual es {current_cosine_similarity:.4f}. Revisa el currículum para aumentar aún más esta puntuación.
-- SOLO produce el currículum actualizado y mejorado. No incluyas explicaciones, comentarios o formato fuera del currículum en sí.
-- IMPORTANTE: La salida debe incluir el encabezado personal completo (nombre, información de contacto) seguido por el contenido del currículum optimizado.
+1. ANALIZA la descripción del trabajo completamente - identifica TODOS los términos clave, habilidades y requisitos
+2. MAPEA experiencias existentes a requisitos del trabajo - encuentra toda conexión posible
+3. REESCRIBE cada sección para maximizar densidad y relevancia de palabras clave:
+   - Resumen Profesional: Llena con palabras clave relevantes al trabajo y propuestas de valor
+   - Experiencia: Expande descripciones, añade detalles relevantes, usa terminología del trabajo
+   - Habilidades: Reorganiza y expande usando lenguaje relevante al trabajo
+   - Educación: Destaca cursos o proyectos relevantes si aplica
+4. ASEGURA flujo natural - evita relleno de palabras clave mientras maximizas frecuencia de términos
+5. PRIORIZA contenido por relevancia al puesto objetivo
 
 Descripción del Trabajo:
 ```md
@@ -58,7 +63,5 @@ Palabras Clave Extraídas del Currículum:
 {extracted_resume_keywords}
 ```
 
-NOTA: SOLO PRODUCE EL CURRÍCULUM ACTUALIZADO Y MEJORADO EN FORMATO MARKDOWN.
-RECORDATORIO: OPTIMIZA PERO NUNCA FABRIQUES - MANTÉN LA INTEGRIDAD COMPLETA DE TODOS LOS HECHOS Y FECHAS.
-SIGUE LAS MEJORES PRÁCTICAS DE ATS PARA FORMATO Y ESTRUCTURA.
+OUTPUT: Currículum optimizado en formato markdown. Sé agresivo en la optimización manteniendo completa integridad factual.
 """

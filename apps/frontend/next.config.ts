@@ -12,9 +12,7 @@ const nextConfig: NextConfig = {
       },
     ];
   },
-  // Vercel deployment settings
   trailingSlash: false,
-  output: 'standalone',
 };
 
 export default nextConfig;

@@ -34,7 +34,7 @@ const ProvideJobDescriptionsPage = () => {
 			router.push(`/results?resume_id=${resumeId}&job_id=${jobId}`);
 		} catch (error) {
 			console.error('Analysis failed:', error);
-			alert(`Failed to analyze job description. Please try again. Error: ${error.message}`);
+			alert(`Failed to analyze job description. Please try again. Error: ${error instanceof Error ? error.message : 'Unknown error'}`);
 		} finally {
 			setIsAnalyzing(false);
 		}

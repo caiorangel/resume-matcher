@@ -2,22 +2,18 @@ import { NextRequest, NextResponse } from 'next/server';
 
 export async function POST(request: NextRequest) {
   try {
-    const body = await request.json();
-    const { job_descriptions, resume_id } = body;
-    
     // For now, return a mock response
-    const mockJobId = `job_${Date.now()}`;
+    const mockResumeId = `resume_${Date.now()}`;
     
     return NextResponse.json({
-      job_id: [mockJobId],
-      resume_id,
+      resume_id: mockResumeId,
       status: 'uploaded',
-      message: 'Job descriptions uploaded successfully (mock)'
+      message: 'Resume uploaded successfully (mock)'
     });
   } catch (error) {
-    console.error('Error uploading job descriptions:', error);
+    console.error('Error uploading resume:', error);
     return NextResponse.json(
-      { error: 'Failed to upload job descriptions' },
+      { error: 'Failed to upload resume' },
       { status: 500 }
     );
   }

@@ -7,7 +7,7 @@ export async function uploadJobDescriptions(
     descriptions: string[],
     resumeId: string
 ): Promise<string> {
-    const res = await fetch(`${API_URL}/api/v1/jobs/upload`, {
+    const res = await fetch(`${API_URL}/api/upload-job`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ job_descriptions: descriptions, resume_id: resumeId }),
@@ -26,7 +26,7 @@ export async function improveResume(
 ): Promise<ImprovedResult> {
     let response: Response;
     try {
-        response = await fetch(`${API_URL}/api/v1/resumes/improve`, {
+        response = await fetch(`${API_URL}/api/improve-resume`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ 

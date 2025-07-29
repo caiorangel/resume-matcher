@@ -2,13 +2,29 @@ import { NextRequest, NextResponse } from 'next/server';
 
 export async function POST(request: NextRequest) {
   try {
-    // For now, return a mock response
-    const mockResumeId = `resume_${Date.now()}`;
+    const formData = await request.formData();
+    const file = formData.get('file') as File;
+    
+    if (!file) {
+      return NextResponse.json(
+        { error: 'No file provided' },
+        { status: 400 }
+      );
+    }
+    
+    // Store basic file info (in real app would parse the PDF/DOCX)
+    const resumeId = `resume_${Date.now()}_${file.name.replace(/\s+/g, '_')}`;
+    
+    // TODO: Here we would actually parse the PDF/DOCX file
+    // For now, just acknowledge the upload
+    console.log(`File uploaded: ${file.name}, Size: ${file.size} bytes`);
     
     return NextResponse.json({
-      resume_id: mockResumeId,
+      resume_id: resumeId,
+      filename: file.name,
+      size: file.size,
       status: 'uploaded',
-      message: 'Resume uploaded successfully (mock)'
+      message: 'Resume uploaded and ready for analysis'
     });
   } catch (error) {
     console.error('Error uploading resume:', error);

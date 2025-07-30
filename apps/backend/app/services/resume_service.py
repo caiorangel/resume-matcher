@@ -58,8 +58,9 @@ class ResumeService:
 
             return resume_id
         finally:
-            if os.path.exists(temp_path):
-                os.remove(temp_path)
+            # if os.path.exists(temp_path):
+            #     os.remove(temp_path)
+            pass
 
     def _get_file_extension(self, file_type: str) -> str:
         """Returns the appropriate file extension based on MIME type"""
@@ -100,42 +101,24 @@ class ResumeService:
 
         processed_resume = ProcessedResume(
             resume_id=resume_id,
-            personal_data=json.dumps(structured_resume.get("personal_data", {}))
-            if structured_resume.get("personal_data")
-            else None,
-            experiences=json.dumps(
-                {"experiences": structured_resume.get("experiences", [])}
-            )
-            if structured_resume.get("experiences")
-            else None,
-            projects=json.dumps({"projects": structured_resume.get("projects", [])})
-            if structured_resume.get("projects")
-            else None,
-            skills=json.dumps({"skills": structured_resume.get("skills", [])})
-            if structured_resume.get("skills")
-            else None,
-            research_work=json.dumps(
-                {"research_work": structured_resume.get("research_work", [])}
-            )
-            if structured_resume.get("research_work")
-            else None,
-            achievements=json.dumps(
-                {"achievements": structured_resume.get("achievements", [])}
-            )
-            if structured_resume.get("achievements")
-            else None,
-            education=json.dumps({"education": structured_resume.get("education", [])})
-            if structured_resume.get("education")
-            else None,
-            extracted_keywords=json.dumps(
-                {"extracted_keywords": structured_resume.get("extracted_keywords", [])}
-                if structured_resume.get("extracted_keywords")
-                else None
-            ),
+            personal_data=structured_resume.get("personal_data", {}),
+            experiences={"experiences": structured_resume.get("experiences", [])},
+            projects={"projects": structured_resume.get("projects", [])},
+            skills={"skills": structured_resume.get("skills", [])},
+            research_work={"research_work": structured_resume.get("research_work", [])},
+            achievements={"achievements": structured_resume.get("achievements", [])},
+            education={"education": structured_resume.get("education", [])},
+            extracted_keywords={"extracted_keywords": structured_resume.get("extracted_keywords", [])},
         )
 
         self.db.add(processed_resume)
-        await self.db.commit()
+        try:
+            await self.db.commit()
+            logger.info(f"Successfully stored structured resume for resume_id: {resume_id}")
+        except Exception as e:
+            logger.error(f"DATABASE COMMIT FAILED for resume_id: {resume_id}. Error: {e}", exc_info=True)
+            await self.db.rollback()
+            raise
 
     async def _extract_structured_json(
         self, resume_text: str

@@ -5,10 +5,10 @@ const nextConfig: NextConfig = {
   async rewrites() {
     return [
       {
-        source: '/api_be/:path*',
+        source: '/api/:path*',
         destination: process.env.NODE_ENV === 'production' 
           ? '/api/:path*'  // In production, route to Vercel functions
-          : 'http://localhost:8000/:path*',  // In development, route to local backend
+          : 'http://localhost:8000/api/:path*',  // In development, route to local backend
       },
     ];
   },
